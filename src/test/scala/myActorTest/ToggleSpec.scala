@@ -16,7 +16,7 @@ class ToggleSpec extends TestKit(ActorSystem("ToggleSpec"))
   
   
   override def afterAll(): Unit = {
-    system.shutdown()
+    system.terminate
   }
 
   "A Toggle" must {
