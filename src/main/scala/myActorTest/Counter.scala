@@ -18,12 +18,15 @@ class Counter extends Actor {
   }
 }
  
+object CounterMain{
+  case object Init
 
+}
 
 class CounterMain extends Actor {
-  
+  import CounterMain._
   def receive = {
-    case "init" =>
+    case Init =>
       val counter = context.actorOf(Props[Counter], "counter")
       counter ! Counter.Incr
       counter ! Counter.Incr
@@ -42,7 +45,7 @@ object ApplicationCounter extends App {
   val system = ActorSystem("Reactive1")
   val mainActor = system.actorOf(Props[CounterMain], "mainActor")
 
-  mainActor ! "init"
+  mainActor ! CounterMain.Init
 
   Await.result(system.whenTerminated, Duration.Inf)
 }
