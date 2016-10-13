@@ -38,7 +38,7 @@ class CounterMain extends Actor {
 }
 
 
-object ApplicationMain extends App {
+object ApplicationCounter extends App {
   val system = ActorSystem("Reactive1")
   val mainActor = system.actorOf(Props[CounterMain], "mainActor")
 
