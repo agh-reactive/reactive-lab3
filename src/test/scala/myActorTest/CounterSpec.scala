@@ -5,7 +5,6 @@ import org.scalatest.WordSpecLike
 import scala.concurrent.Future
 import java.util.concurrent.Executor
 import org.scalatest.BeforeAndAfterAll
-import akka.testkit.ImplicitSender
 import akka.actor.Props
 import akka.actor.Actor
 import akka.actor.ActorRef
@@ -13,7 +12,7 @@ import akka.testkit.TestActorRef
 
 
 class CounterSpec extends TestKit(ActorSystem("CounterSpec"))
-  with WordSpecLike with BeforeAndAfterAll with ImplicitSender {
+  with WordSpecLike with BeforeAndAfterAll  {
   
   
   override def afterAll(): Unit = {
