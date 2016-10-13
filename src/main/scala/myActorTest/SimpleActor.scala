@@ -48,7 +48,7 @@ class ToggleMain extends Actor {
     case "Start"=>
       startToggle
     case "Done" =>
-      context.system.shutdown
+      context.system.terminate
     case msg: String =>
       println(s" received: $msg" )
      
