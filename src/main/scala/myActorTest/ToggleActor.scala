@@ -1,68 +1,69 @@
 package myActorTest
 
-import akka.actor.Actor
-import akka.actor.ActorSystem
-import akka.actor.Props
-import akka.event.LoggingReceive
-import akka.event.Logging
+import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
+import akka.actor.typed.scaladsl.Behaviors
 
-class Toggle extends Actor {
+import scala.concurrent.Await
+import scala.concurrent.duration._
 
-  def happy: Receive = LoggingReceive {
-    case "How are you?" =>
-      sender ! "happy"
-      context become sad
+object ToggleActor {
 
-    case "Done" =>
-      sender ! "Done"
-      context.stop(self)
+  trait Command
+  case class HowAreYou(relyTo: ActorRef[String]) extends Command
+  case class Done(relyTo: ActorRef[String])      extends Command
+
+  def happy: Behavior[Command] = Behaviors.receiveMessage {
+    case HowAreYou(replyTo) =>
+      replyTo ! "happy"
+      sad
+
+    case Done(replyTo) =>
+      replyTo ! "Done"
+      Behaviors.stopped
   }
 
-  def sad: Receive = LoggingReceive {
-    case "How are you?" =>
-      sender ! "sad"
-      context become happy
+  def sad: Behavior[Command] = Behaviors.receiveMessage {
+    case HowAreYou(replyTo) =>
+      replyTo ! "sad"
+      happy
 
-    case "Done" =>
-      sender ! "Done"
-
+    case Done(replyTo) =>
+      replyTo ! "Done"
+      Behaviors.stopped
   }
-  def receive = happy
+  def apply(): Behavior[Command] = happy
 }
-class ToggleMain extends Actor {
 
-  def startToggle = {
-    val toggle = context.actorOf(Props[Toggle], "toggle")
-
-    toggle ! "How are you?"
-    toggle ! "How are you?"
-    toggle ! "How are you?"
-    toggle ! "Done"
-  }
-
-  def receive = LoggingReceive {
-    case "Start" =>
-      startToggle
-    case "Done" =>
-      context.system.terminate
-    case msg: String =>
-      println(s" received: $msg")
-
-  }
-}
 object ToggleMain {
 
-  val system = ActorSystem()
-
-  val log = Logging(system, ToggleMain.getClass().getName())
-
-  def main(args: Array[String]): Unit = run()
-
-  def run() = {
-    log.debug("Starting toggle example.")
-    val toggleMain = system.actorOf(Props[ToggleMain], "toggleMain")
-
-    toggleMain ! "Start"
-
+  def apply(): Behavior[String] = Behaviors.setup { context =>
+    apply(context.spawn(ToggleActor(), "toggle").ref)
   }
+
+  def apply(toggle: ActorRef[ToggleActor.Command]): Behavior[String] =
+    Behaviors.receive(
+      (context, msg) =>
+        msg match {
+          case "Init" =>
+            toggle ! ToggleActor.HowAreYou(context.self)
+            toggle ! ToggleActor.HowAreYou(context.self)
+            toggle ! ToggleActor.HowAreYou(context.self)
+            toggle ! ToggleActor.Done(context.self)
+            Behaviors.same
+          case "Done" =>
+            context.system.terminate
+            Behaviors.stopped
+          case msg: String =>
+            println(s" received: $msg")
+            Behaviors.same
+      }
+    )
+}
+
+object ToggleApp extends App {
+  val system: ActorSystem[String] = ActorSystem(ToggleMain(), "Reactive2")
+
+  system ! "Init"
+
+  Await.result(system.whenTerminated, Duration.Inf)
 }
