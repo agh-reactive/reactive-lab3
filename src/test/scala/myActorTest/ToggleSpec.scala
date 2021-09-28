@@ -1,48 +1,41 @@
 package myActorTest
 
-import akka.testkit.TestKit
-import akka.actor.ActorSystem
-import scala.concurrent.Future
-import java.util.concurrent.Executor
+import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import org.scalatest.BeforeAndAfterAll
-import akka.testkit.ImplicitSender
-import akka.actor.Props
-import akka.actor.Actor
-import akka.actor.ActorRef
 import org.scalatest.wordspec.AnyWordSpecLike
 
-class ToggleSpec
-  extends TestKit(ActorSystem("ToggleSpec"))
-  with AnyWordSpecLike
-  with BeforeAndAfterAll
-  with ImplicitSender {
+class ToggleSpec extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
-  override def afterAll(): Unit =
-    system.terminate
+  import ToggleActor._
 
   "A Toggle" must {
 
     "start in a happy mood" in {
-      val toggle = system.actorOf(Props[Toggle])
+      val toggle = testKit.spawn(ToggleActor())
+      val probe  = testKit.createTestProbe[String]()
 
-      toggle ! "How are you?"
-      expectMsg("happy")
+      toggle ! HowAreYou(probe.ref)
+      probe.expectMessage("happy")
     }
 
     "change its mood" in {
-      val toggle = system.actorOf(Props[Toggle])
+      val toggle = testKit.spawn(ToggleActor())
+      val probe  = testKit.createTestProbe[String]()
+
       for (i <- 1 to 5) {
-        toggle ! "How are you?"
-        expectMsg("happy")
-        toggle ! "How are you?"
-        expectMsg("sad")
+        toggle ! HowAreYou(probe.ref)
+        probe.expectMessage("happy")
+        toggle ! HowAreYou(probe.ref)
+        probe.expectMessage("sad")
       }
     }
 
     "finish when done" in {
-      val toggle = system.actorOf(Props[Toggle])
-      toggle ! "Done"
-      expectMsg("Done")
+      val toggle = testKit.spawn(ToggleActor())
+      val probe  = testKit.createTestProbe[String]()
+
+      toggle ! Done(probe.ref)
+      probe.expectMessage("Done")
     }
 
   }
