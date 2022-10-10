@@ -16,7 +16,7 @@ For testing actors we can use [akka-actor-testkit-typed](https://doc.akka.io/doc
 
 All tests are in `src/test/scala/myActorTest`. To run tests execute `sbt test`.
 
-## Homework
+## Assignment
 
 The template for Lab 3: https://github.com/agh-reactive/reactive-scala-labs-templates/tree/lab-3 
 * **be sure that your local lab-3 branch is up to date with remote one**
