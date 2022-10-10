@@ -1,4 +1,4 @@
-Lab 3 - Akka Actor Testing
+# Lab 3 - Akka Actor Testing
 
 ## Testing code in scala - ScalaTest
 
