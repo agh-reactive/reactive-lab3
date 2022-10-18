@@ -1,4 +1,4 @@
-# Lab 3 - Akka Actor Testing
+# Lab 3 - Actor System and Testing Actors
 
 ## Testing code in scala - ScalaTest
 
@@ -24,7 +24,7 @@ The template for Lab 3: https://github.com/agh-reactive/reactive-scala-labs-temp
 
 1. (20 points)
 
-* Add to action system actors `OrderManager` and `Payment` according to the diagram below:
+* Add new actors `OrderManager` and `Payment` and create an actor system according to the diagram below:
 ![OrderManager diagram](ordermanager.drawio.svg)
 
 * Add test for `CartActor`. Tests should contain:
@@ -35,7 +35,7 @@ The template for Lab 3: https://github.com/agh-reactive/reactive-scala-labs-temp
 
 ![Cart Checkout Testing](cart-checkout-behavior.drawio.svg)
 
-3. (10 points) Change implementation to use in `OrderManager` the [Adapter Response](https://doc.akka.io/docs/akka/current/typed/interaction-patterns.html#adapted-response) pattern. Tip: actors (e.g. `Checkout`) should send responses in the form of events (e.g. `CheckoutClosed`), and the adapter should map them into commands (e.g. `ConfirmCheckoutClosed`).
+3. (10 points) Change implementation to use in `OrderManager` the [Adapted Response](https://doc.akka.io/docs/akka/current/typed/interaction-patterns.html#adapted-response) pattern. Tip: actors (e.g. `Checkout`) should send responses in the form of events (e.g. `CheckoutClosed`), and the adapter should map them into commands (e.g. `ConfirmCheckoutClosed`).
 
 ## Submission
 
