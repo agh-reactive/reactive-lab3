@@ -36,6 +36,7 @@ The template for Lab 3: https://github.com/agh-reactive/reactive-scala-labs-temp
 ![Cart Checkout Testing](cart-checkout-behavior.drawio.svg)
 
 3. (10 points) Change implementation to use in `OrderManager` the [Adapted Response](https://doc.akka.io/docs/akka/current/typed/interaction-patterns.html#adapted-response) pattern. Tip: actors (e.g. `Checkout`) should send responses in the form of events (e.g. `CheckoutClosed`), and the adapter should map them into commands (e.g. `ConfirmCheckoutClosed`).
+  * More on the [Message adapter pattern](https://blog.rockthejvm.com/akka-message-adapter/)
 
 ## Submission
 
